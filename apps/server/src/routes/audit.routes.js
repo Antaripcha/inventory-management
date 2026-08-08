@@ -3,7 +3,7 @@ import * as auditController from "../controllers/audit.controller.js";
 import { authenticate, authorize } from "../middleware/auth.middleware.js";
 
 const router = Router();
-router.use(authenticate, authorize("admin"));
+router.use(authenticate, authorize("admin", "user"));
 
 /**
  * @openapi

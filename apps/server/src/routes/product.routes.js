@@ -85,7 +85,7 @@ router.get("/export/csv", productController.exportProducts);
  *     responses:
  *       200: { description: Import summary }
  */
-router.post("/import/csv", authorize("admin"), csvUpload.single("file"), productController.importProducts);
+router.post("/import/csv", authorize("admin", "user"), csvUpload.single("file"), productController.importProducts);
 
 /**
  * @openapi
@@ -104,7 +104,7 @@ router.post("/import/csv", authorize("admin"), csvUpload.single("file"), product
  *       200: { description: Product updated }
  *   delete:
  *     tags: [Products]
- *     summary: Delete a product (admin only)
+ *     summary: Delete a product
  *     security: [{ bearerAuth: [] }]
  *     responses:
  *       200: { description: Product deleted }
@@ -118,6 +118,6 @@ router.put(
   validate,
   productController.updateProduct
 );
-router.delete("/:id", authorize("admin"), productIdValidator, validate, productController.deleteProduct);
+router.delete("/:id", authorize("admin", "user"), productIdValidator, validate, productController.deleteProduct);
 
 export default router;

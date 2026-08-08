@@ -24,7 +24,7 @@ router.use(authenticate);
  *       201: { description: Category created }
  */
 router.get("/", categoryController.listCategories);
-router.post("/", authorize("admin"), categoryValidator, validate, categoryController.createCategory);
+router.post("/", authorize("admin", "user"), categoryValidator, validate, categoryController.createCategory);
 
 /**
  * @openapi
@@ -37,13 +37,13 @@ router.post("/", authorize("admin"), categoryValidator, validate, categoryContro
  *       200: { description: Category }
  *   put:
  *     tags: [Categories]
- *     summary: Update a category (admin only)
+ *     summary: Update a category
  *     security: [{ bearerAuth: [] }]
  *     responses:
  *       200: { description: Category updated }
  *   delete:
  *     tags: [Categories]
- *     summary: Delete a category (admin only)
+ *     summary: Delete a category
  *     security: [{ bearerAuth: [] }]
  *     responses:
  *       200: { description: Category deleted }
@@ -51,12 +51,12 @@ router.post("/", authorize("admin"), categoryValidator, validate, categoryContro
 router.get("/:id", idParamValidator, validate, categoryController.getCategory);
 router.put(
   "/:id",
-  authorize("admin"),
+  authorize("admin", "user"),
   idParamValidator,
   categoryValidator,
   validate,
   categoryController.updateCategory
 );
-router.delete("/:id", authorize("admin"), idParamValidator, validate, categoryController.deleteCategory);
+router.delete("/:id", authorize("admin", "user"), idParamValidator, validate, categoryController.deleteCategory);
 
 export default router;
