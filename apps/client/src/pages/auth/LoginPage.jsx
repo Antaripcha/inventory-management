@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Eye, EyeOff } from "lucide-react";
 import { loginSchema } from "@inventory/types";
 import { Logo } from "@inventory/ui";
 import { Button } from "@/components/ui/button";
@@ -11,6 +13,7 @@ import { useLogin } from "@/hooks/useAuth";
 
 export default function LoginPage() {
   const login = useLogin();
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -39,7 +42,23 @@ export default function LoginPage() {
           </FormField>
 
           <FormField label="Password" htmlFor="password" error={errors.password?.message} required>
-            <Input id="password" type="password" placeholder="••••••••" {...register("password")} />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                className="pr-10"
+                {...register("password")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </FormField>
 
           <Button type="submit" className="w-full" disabled={login.isPending}>
