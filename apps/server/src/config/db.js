@@ -1,0 +1,18 @@
+import mongoose from "mongoose";
+import { env } from "./env.js";
+import { logger } from "../utils/logger.js";
+
+export async function connectDB() {
+  mongoose.set("strictQuery", true);
+  try {
+    await mongoose.connect(env.MONGO_URI);
+    logger.info(`MongoDB connected: ${mongoose.connection.host}`);
+  } catch (err) {
+    logger.error(`MongoDB connection error: ${err.message}`);
+    process.exit(1);
+  }
+}
+
+export async function disconnectDB() {
+  await mongoose.disconnect();
+}
