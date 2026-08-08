@@ -1,7 +1,7 @@
 import {
   Boxes,
   Layers,
-  DollarSign,
+  IndianRupee,
   AlertTriangle,
   PackageX,
   Tags,
@@ -41,7 +41,7 @@ export default function DashboardPage() {
     { label: "Total Products", value: summary?.totalProducts ?? 0, icon: Boxes, tone: "default" },
     { label: "Categories", value: summary?.totalCategories ?? 0, icon: Tags, tone: "default" },
     { label: "Total Stock", value: summary?.totalStock ?? 0, icon: Layers, tone: "default" },
-    { label: "Inventory Value", value: formatCurrency(summary?.inventoryValue), icon: DollarSign, tone: "success" },
+    { label: "Inventory Value", value: formatCurrency(summary?.inventoryValue), icon: IndianRupee, tone: "success" },
     { label: "Low Stock", value: summary?.lowStock ?? 0, icon: AlertTriangle, tone: "warning" },
     { label: "Out of Stock", value: summary?.outOfStock ?? 0, icon: PackageX, tone: "destructive" },
   ];

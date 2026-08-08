@@ -176,7 +176,7 @@ export function ProductFormDialog({ open, onOpenChange, product }) {
               <Input id="quantity" type="number" min="0" step="1" {...register("quantity")} />
             </FormField>
 
-            <FormField label="Price (USD)" htmlFor="price" error={errors.price?.message} required>
+            <FormField label="Price (₹)" htmlFor="price" error={errors.price?.message} required>
               <Input id="price" type="number" min="0.01" step="0.01" {...register("price")} />
             </FormField>
 
