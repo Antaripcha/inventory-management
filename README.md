@@ -9,21 +9,32 @@ A production-ready, full-stack Inventory Management System built as a **TurboRep
 
 ---
 
+## 🎥 Video Demo
+
+Watch the live application walkthrough and demonstration:
+
+[![Watch Demo Video](https://img.shields.io/badge/▶_Watch_Project_Demo_Video-Google_Drive-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com/file/d/1WWPmkGS2G5klF7GhMNPF-1KF7wfNrHba/view?usp=sharing)
+
+👉 **[Click here to watch the full Video Demo on Google Drive](https://drive.google.com/file/d/1WWPmkGS2G5klF7GhMNPF-1KF7wfNrHba/view?usp=sharing)**
+
+---
+
 ## Table of contents
 
-1. [Tech stack](#tech-stack)
-2. [Monorepo structure](#monorepo-structure)
-3. [Features](#features)
-4. [Quick start](#quick-start)
-5. [Running with Docker](#running-with-docker)
-6. [Environment variables](#environment-variables)
-7. [Seeding the database](#seeding-the-database)
-8. [API documentation](#api-documentation)
-9. [Postman collection](#postman-collection)
-10. [Testing](#testing)
-11. [Database schema (ER diagram)](#database-schema)
-12. [Project scripts](#project-scripts)
-13. [Security notes](#security-notes)
+1. [Video demo](#-video-demo)
+2. [Tech stack](#tech-stack)
+3. [Monorepo structure](#monorepo-structure)
+4. [Features](#features)
+5. [Quick start](#quick-start)
+6. [Running with Docker](#running-with-docker)
+7. [Environment variables](#environment-variables)
+8. [Seeding the database](#seeding-the-database)
+9. [API documentation](#api-documentation)
+10. [Postman collection](#postman-collection)
+11. [Testing](#testing)
+12. [Database schema (ER diagram)](#database-schema)
+13. [Project scripts](#project-scripts)
+14. [Security notes](#security-notes)
 
 ---
 
