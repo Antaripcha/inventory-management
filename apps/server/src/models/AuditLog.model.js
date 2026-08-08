@@ -18,5 +18,6 @@ const auditLogSchema = new mongoose.Schema(
 );
 
 auditLogSchema.index({ createdAt: -1 });
+auditLogSchema.index({ user: 1, createdAt: -1 });
 
 export const AuditLog = mongoose.model("AuditLog", auditLogSchema);

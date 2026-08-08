@@ -9,12 +9,13 @@ import {
 } from "../services/dashboard.service.js";
 
 export const getDashboard = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
   const [summary, categoryDistribution, stockStatus, trend, recentActivity] = await Promise.all([
-    getSummary(),
-    getCategoryDistribution(),
-    getStockStatusBreakdown(),
-    getInventoryValueTrend(14),
-    getRecentActivity(10),
+    getSummary(userId),
+    getCategoryDistribution(userId),
+    getStockStatusBreakdown(userId),
+    getInventoryValueTrend(userId, 14),
+    getRecentActivity(userId, 10),
   ]);
 
   sendSuccess(res, {

@@ -7,7 +7,7 @@ export const listAuditLogs = asyncHandler(async (req, res) => {
   const pageNum = Math.max(parseInt(page, 10) || 1, 1);
   const limitNum = Math.min(parseInt(limit, 10) || 25, 100);
 
-  const filter = {};
+  const filter = { user: req.user.id };
   if (entity) filter.entity = entity;
   if (action) filter.action = action;
 

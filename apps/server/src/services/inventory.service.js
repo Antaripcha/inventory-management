@@ -9,7 +9,7 @@ import { computeStatus } from "@inventory/types";
  * and falls back to a plain sequential write for standalone MongoDB (e.g. local dev).
  */
 export async function applyStockChange({ productId, type, quantity, reason, userId }) {
-  const product = await Product.findById(productId);
+  const product = await Product.findOne({ _id: productId, user: userId });
   if (!product) throw ApiError.notFound("Product not found");
 
   const previousQuantity = product.quantity;
@@ -37,6 +37,7 @@ export async function applyStockChange({ productId, type, quantity, reason, user
   await product.save();
 
   const transaction = await InventoryTransaction.create({
+    user: userId,
     product: product._id,
     type,
     quantity: type === "ADJUSTMENT" ? Math.abs(newQuantity - previousQuantity) || 0 : quantity,

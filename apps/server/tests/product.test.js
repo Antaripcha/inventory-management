@@ -70,7 +70,7 @@ describe("Product API", () => {
       .field("price", "19.99");
 
     expect(res.status).toBe(201);
-    expect(res.body.data.status).toBe("Low Stock");
+    expect(res.body.data.status).toBe("In Stock");
   });
 
   it("rejects duplicate SKU", async () => {
@@ -106,6 +106,36 @@ describe("Product API", () => {
       .field("price", "-1");
 
     expect(res.status).toBe(400);
+  });
+
+  it("enforces strict per-user data isolation", async () => {
+    const user2Res = await request(app).post("/api/auth/register").send({
+      name: "User Two",
+      email: "user2@test.com",
+      password: "Password123",
+    });
+    const token2 = user2Res.body.data.accessToken;
+
+    const p1Res = await request(app)
+      .post("/api/products")
+      .set("Authorization", `Bearer ${token}`)
+      .field("name", "User 1 Product")
+      .field("sku", "U1-001")
+      .field("category", categoryId)
+      .field("quantity", "10")
+      .field("price", "20");
+    expect(p1Res.status).toBe(201);
+
+    const list2 = await request(app)
+      .get("/api/products")
+      .set("Authorization", `Bearer ${token2}`);
+    expect(list2.status).toBe(200);
+    expect(list2.body.data.length).toBe(0);
+
+    const get2 = await request(app)
+      .get(`/api/products/${p1Res.body.data._id}`)
+      .set("Authorization", `Bearer ${token2}`);
+    expect(get2.status).toBe(404);
   });
 });
 

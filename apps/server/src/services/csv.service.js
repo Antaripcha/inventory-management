@@ -16,8 +16,8 @@ const CSV_FIELDS = [
   "updatedAt",
 ];
 
-export async function exportProductsToCSV() {
-  const products = await Product.find().populate("category", "name").lean();
+export async function exportProductsToCSV(userId) {
+  const products = await Product.find({ user: userId }).populate("category", "name").lean();
   const rows = products.map((p) => ({
     ...p,
     category: p.category?.name || "",
@@ -56,12 +56,13 @@ export async function importProductsFromCSV(csvText, userId) {
     const row = Object.fromEntries(header.map((h, idx) => [h, cols[idx]]));
 
     try {
-      let category = await Category.findOne({ name: row.category });
+      let category = await Category.findOne({ user: userId, name: row.category });
       if (!category) {
-        category = await Category.create({ name: row.category, createdBy: userId });
+        category = await Category.create({ user: userId, name: row.category, createdBy: userId });
       }
 
       const payload = {
+        user: userId,
         name: row.name,
         sku: row.sku?.toUpperCase(),
         category: category._id,
@@ -73,7 +74,7 @@ export async function importProductsFromCSV(csvText, userId) {
         updatedBy: userId,
       };
 
-      const existing = await Product.findOne({ sku: payload.sku });
+      const existing = await Product.findOne({ user: userId, sku: payload.sku });
       if (existing) {
         Object.assign(existing, payload);
         await existing.save();

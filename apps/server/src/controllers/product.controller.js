@@ -18,7 +18,7 @@ export const listProducts = asyncHandler(async (req, res) => {
     sortOrder = "desc",
   } = req.query;
 
-  const filter = {};
+  const filter = { user: req.user.id };
   if (search) {
     filter.$or = [
       { name: { $regex: search, $options: "i" } },
@@ -54,7 +54,10 @@ export const listProducts = asyncHandler(async (req, res) => {
 });
 
 export const getProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id).populate("category", "name");
+  const product = await Product.findOne({ _id: req.params.id, user: req.user.id }).populate(
+    "category",
+    "name"
+  );
   if (!product) throw ApiError.notFound("Product not found");
   sendSuccess(res, { data: product });
 });
@@ -63,13 +66,14 @@ export const createProduct = asyncHandler(async (req, res) => {
   const { name, sku, category, description, quantity, price, supplier, barcode, lowStockThreshold } =
     req.body;
 
-  const categoryDoc = await Category.findById(category);
+  const categoryDoc = await Category.findOne({ _id: category, user: req.user.id });
   if (!categoryDoc) throw ApiError.badRequest("Selected category does not exist");
 
-  const existingSku = await Product.findOne({ sku: sku.toUpperCase() });
+  const existingSku = await Product.findOne({ user: req.user.id, sku: sku.toUpperCase() });
   if (existingSku) throw ApiError.conflict("A product with this SKU already exists");
 
   const product = await Product.create({
+    user: req.user.id,
     name,
     sku: sku.toUpperCase(),
     category,
@@ -97,20 +101,20 @@ export const createProduct = asyncHandler(async (req, res) => {
 });
 
 export const updateProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findOne({ _id: req.params.id, user: req.user.id });
   if (!product) throw ApiError.notFound("Product not found");
 
   const { name, sku, category, description, quantity, price, supplier, barcode, lowStockThreshold } =
     req.body;
 
   if (category) {
-    const categoryDoc = await Category.findById(category);
+    const categoryDoc = await Category.findOne({ _id: category, user: req.user.id });
     if (!categoryDoc) throw ApiError.badRequest("Selected category does not exist");
     product.category = category;
   }
 
   if (sku && sku.toUpperCase() !== product.sku) {
-    const existingSku = await Product.findOne({ sku: sku.toUpperCase() });
+    const existingSku = await Product.findOne({ user: req.user.id, sku: sku.toUpperCase() });
     if (existingSku) throw ApiError.conflict("A product with this SKU already exists");
     product.sku = sku.toUpperCase();
   }
@@ -147,7 +151,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
 });
 
 export const deleteProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findOne({ _id: req.params.id, user: req.user.id });
   if (!product) throw ApiError.notFound("Product not found");
 
   if (product.image) {
@@ -170,7 +174,7 @@ export const deleteProduct = asyncHandler(async (req, res) => {
 });
 
 export const exportProducts = asyncHandler(async (req, res) => {
-  const csv = await exportProductsToCSV();
+  const csv = await exportProductsToCSV(req.user.id);
   res.header("Content-Type", "text/csv");
   res.attachment(`products-${Date.now()}.csv`);
   res.send(csv);

@@ -3,11 +3,16 @@ import { LOW_STOCK_THRESHOLD, computeStatus } from "@inventory/types";
 
 const productSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     name: { type: String, required: true, trim: true, maxlength: 120 },
     sku: {
       type: String,
       required: true,
-      unique: true,
       uppercase: true,
       trim: true,
       maxlength: 40,
@@ -35,7 +40,8 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-productSchema.index({ name: "text", sku: "text" });
+productSchema.index({ user: 1, sku: 1 }, { unique: true });
+productSchema.index({ user: 1, name: "text", sku: "text" });
 
 productSchema.pre("save", function setStatus(next) {
   this.status = computeStatus(this.quantity, this.lowStockThreshold);

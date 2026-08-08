@@ -1,7 +1,10 @@
+import mongoose from "mongoose";
 import { Product, Category, InventoryTransaction } from "../models/index.js";
 
-export async function getSummary() {
+export async function getSummary(userId) {
+  const userObjectId = new mongoose.Types.ObjectId(userId);
   const [totals] = await Product.aggregate([
+    { $match: { user: userObjectId } },
     {
       $group: {
         _id: null,
@@ -18,7 +21,7 @@ export async function getSummary() {
     },
   ]);
 
-  const totalCategories = await Category.countDocuments();
+  const totalCategories = await Category.countDocuments({ user: userId });
 
   return {
     totalProducts: totals?.totalProducts || 0,
@@ -30,8 +33,10 @@ export async function getSummary() {
   };
 }
 
-export async function getCategoryDistribution() {
+export async function getCategoryDistribution(userId) {
+  const userObjectId = new mongoose.Types.ObjectId(userId);
   return Product.aggregate([
+    { $match: { user: userObjectId } },
     {
       $group: {
         _id: "$category",
@@ -60,8 +65,10 @@ export async function getCategoryDistribution() {
   ]);
 }
 
-export async function getStockStatusBreakdown() {
+export async function getStockStatusBreakdown(userId) {
+  const userObjectId = new mongoose.Types.ObjectId(userId);
   const rows = await Product.aggregate([
+    { $match: { user: userObjectId } },
     { $group: { _id: "$status", count: { $sum: 1 } } },
   ]);
   const map = { "In Stock": 0, "Low Stock": 0, "Out of Stock": 0 };
@@ -71,12 +78,13 @@ export async function getStockStatusBreakdown() {
   return Object.entries(map).map(([status, count]) => ({ status, count }));
 }
 
-export async function getInventoryValueTrend(days = 14) {
+export async function getInventoryValueTrend(userId, days = 14) {
+  const userObjectId = new mongoose.Types.ObjectId(userId);
   const since = new Date();
   since.setDate(since.getDate() - days);
 
   return InventoryTransaction.aggregate([
-    { $match: { createdAt: { $gte: since } } },
+    { $match: { user: userObjectId, createdAt: { $gte: since } } },
     {
       $group: {
         _id: {
@@ -95,8 +103,8 @@ export async function getInventoryValueTrend(days = 14) {
   ]);
 }
 
-export async function getRecentActivity(limit = 10) {
-  return InventoryTransaction.find()
+export async function getRecentActivity(userId, limit = 10) {
+  return InventoryTransaction.find({ user: userId })
     .sort({ createdAt: -1 })
     .limit(limit)
     .populate("product", "name sku")

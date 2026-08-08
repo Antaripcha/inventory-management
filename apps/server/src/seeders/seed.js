@@ -52,7 +52,7 @@ async function seed() {
 
   console.log("Creating categories...");
   const createdCategories = await Category.insertMany(
-    categories.map((c) => ({ ...c, createdBy: admin._id }))
+    categories.map((c) => ({ ...c, user: admin._id, createdBy: admin._id }))
   );
 
   console.log("Creating products...");
@@ -70,6 +70,7 @@ async function seed() {
     for (const name of names) {
       const quantity = randomInt(0, 60);
       products.push({
+        user: admin._id,
         name,
         sku: `${category.name.slice(0, 3).toUpperCase()}-${randomInt(1000, 9999)}`,
         category: category._id,
@@ -91,6 +92,7 @@ async function seed() {
   for (const product of createdProducts) {
     const initialQty = randomInt(20, 80);
     transactions.push({
+      user: admin._id,
       product: product._id,
       type: "STOCK_IN",
       quantity: initialQty,
@@ -104,6 +106,7 @@ async function seed() {
     if (Math.random() > 0.5) {
       const outQty = randomInt(1, Math.min(10, initialQty));
       transactions.push({
+        user: admin._id,
         product: product._id,
         type: "STOCK_OUT",
         quantity: outQty,

@@ -39,12 +39,12 @@ export const getProductHistory = asyncHandler(async (req, res) => {
   const limitNum = Math.min(parseInt(limit, 10) || 20, 100);
 
   const [items, total] = await Promise.all([
-    InventoryTransaction.find({ product: id })
+    InventoryTransaction.find({ product: id, user: req.user.id })
       .sort({ createdAt: -1 })
       .skip((pageNum - 1) * limitNum)
       .limit(limitNum)
       .populate("performedBy", "name email"),
-    InventoryTransaction.countDocuments({ product: id }),
+    InventoryTransaction.countDocuments({ product: id, user: req.user.id }),
   ]);
 
   sendSuccess(res, {
@@ -59,13 +59,13 @@ export const listAllTransactions = asyncHandler(async (req, res) => {
   const limitNum = Math.min(parseInt(limit, 10) || 20, 100);
 
   const [items, total] = await Promise.all([
-    InventoryTransaction.find()
+    InventoryTransaction.find({ user: req.user.id })
       .sort({ createdAt: -1 })
       .skip((pageNum - 1) * limitNum)
       .limit(limitNum)
       .populate("product", "name sku")
       .populate("performedBy", "name email"),
-    InventoryTransaction.countDocuments(),
+    InventoryTransaction.countDocuments({ user: req.user.id }),
   ]);
 
   sendSuccess(res, {
